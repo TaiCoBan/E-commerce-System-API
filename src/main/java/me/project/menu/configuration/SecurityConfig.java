@@ -29,7 +29,9 @@ public class SecurityConfig {
 
     private static final String[] USER_ADMIN_SOURCES = {
             "/customers/get",
-            "/customers/update"
+            "/customers/update",
+            "/products/add-new-product",
+            "/products/get/{productId}"
     };
     
     private static final String[] USER_SOURCES = {
