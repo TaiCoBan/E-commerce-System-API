@@ -23,15 +23,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private static final String[] PUBLIC_SOURCES = {
+            "/customers/add-new-customer",
+            "/auth/generate-token"
     };
 
     private static final String[] USER_ADMIN_SOURCES = {
+            "/customers/get",
+            "/customers/update"
     };
     
     private static final String[] USER_SOURCES = {
     };
 
     private static final String[] ADMIN_SOURCES = {
+            "/customers/get-all"
     };
 
     @Autowired
