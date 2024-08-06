@@ -10,9 +10,12 @@ import me.project.menu.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.NotDirectoryException;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,11 +59,36 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Cacheable(value = "Product")
     public List<Product> getAll() {
-        return null;
+        return productRepo.findAll();
     }
 
     @Override
-    public Product update(Product product) {
-        return null;
+    @CacheEvict(value = "Product", key = "#productId")
+    @CachePut(value = "Product", key = "#productId")
+    public Product update(Product product, Long productId) {
+        log.info("\n\nNew Product : {}\n", product);
+
+        Long categoryId = product.getCategoryId();
+        if (categoryRepo.findById(categoryId).isEmpty()) {
+            throw new NotFoundException("Category Not Found");
+        }
+        if (product.getId() != productId) {
+            if (productRepo.findById(product.getId()).isPresent()) {
+                throw new InvalidParamException("Product ID already exists");
+            }
+            throw new InvalidParamException("Invalid Product ID");
+        }
+
+        Optional<Product> currentProduct = productRepo.findById(productId);
+        if (currentProduct.isEmpty()) {
+            throw new NotFoundException("Product Not Found");
+        }
+
+        Product p = currentProduct.get();
+        p.setName(product.getName());
+        p.setPrice(product.getPrice());
+        p.setCategoryId(product.getCategoryId());
+
+        return productRepo.save(p);
     }
 }

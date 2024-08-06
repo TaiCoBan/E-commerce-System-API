@@ -16,13 +16,24 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("add-new-product")
+    @PostMapping()
     public ResponseEntity<?> add(@RequestBody Product product) {
         return ResponseEntity.ok(productService.add(product));
     }
 
-    @GetMapping("get/{productId}")
+    @GetMapping("{productId}")
     public ResponseEntity<?> get(@PathVariable Long productId) {
         return ResponseEntity.ok(productService.get(productId));
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(productService.getAll());
+    }
+
+    @PutMapping("{productId}")
+    public ResponseEntity<?> update(@RequestBody Product product,
+                                    @PathVariable Long productId) {
+        return ResponseEntity.ok(productService.update(product, productId));
     }
 }
